@@ -26,7 +26,7 @@ declare vb_version
 
 case "$(check_os_family)" in
     debian)
-        debian $vb_version
+        debian "${vb_version}"
         ;; 
 esac
 
