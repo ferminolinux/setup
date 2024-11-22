@@ -16,8 +16,8 @@ debian() {
 
     echo "Configurando o repositório..."
 
-    echo "${repo}" | tee "/etc/apt/sources.list.d/virtualbox-${version_codename}.list"
-    wget -O- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --yes --output /usr/share/keyrings/oracle-virtualbox-2016.gpg --dearmor
+    echo "${repo}" | tee "/etc/apt/sources.list.d/virtualbox-${version_codename}.list" 1>/dev/null
+    wget -q -O- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --yes --output /usr/share/keyrings/oracle-virtualbox-2016.gpg --dearmor
 
     echo "Atualizando os pacotes"
     apt-get update -y &> "/var/log/${SCRIPT_NAME}/update.log" &
