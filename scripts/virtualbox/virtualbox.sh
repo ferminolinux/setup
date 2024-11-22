@@ -1,5 +1,10 @@
 #!/usr/bin/env bash
 
+check_os_family() {
+    os_family="$(curl https://raw.githubusercontent.com/ferminolinux/setup/refs/heads/main/scripts/utils/check_os_family.sh | bash)"
+    echo $os_family
+}
+
 debian() {
     # $1 virtualbox version
 
@@ -14,3 +19,15 @@ debian() {
     sudo apt-get update -y
     sudo apt-get install "virtualbox-${vb_version}"
 }
+
+declare vb_version 
+
+[[ $# -eq 0 ]] && vb_version="6.0" || vb_version="${1}"
+
+case "${os_family}" in
+    debian)
+        debian() $vb_version
+        ;; 
+esac
+
+
