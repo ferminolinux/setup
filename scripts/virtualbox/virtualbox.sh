@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-declare -r SCRIPT_NAME="$(echo ${0%.*} | basename)"
+declare -r SCRIPT_NAME="$(basename "$0" .sh)"
 
 check_os_family() {
     os_family="$(curl -qs https://raw.githubusercontent.com/ferminolinux/setup/refs/heads/main/scripts/utils/check_os_family.sh | bash)"
