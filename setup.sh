@@ -2,7 +2,7 @@
 
 # Executa as opções relacionadas com o Vagrant
 vagrant() {
-    curl 
+    curl https://raw.githubusercontent.com/ferminolinux/setup/refs/heads/main/scripts/vagrant/vagrant.sh | bash
 }
 
 
