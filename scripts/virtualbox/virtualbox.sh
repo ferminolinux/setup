@@ -12,17 +12,19 @@ debian() {
     repo="deb [arch=amd64 signed-by=/usr/share/keyrings/oracle-virtualbox-2016.gpg] https://download.virtualbox.org/virtualbox/debian ${version_codename} contrib"
     vb_version="$1"
 
-    echo "${repo}" | tee "/etc/apt/sources.list.d/virtualbox-${version_codename}"
+    echo "${repo}" | tee "/etc/apt/sources.list.d/virtualbox-${version_codename}.list"
 
     wget -O- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --yes --output /usr/share/keyrings/oracle-virtualbox-2016.gpg --dearmor
 
     apt-get update -y
-    apt-get install "virtualbox-${vb_version}"
+    apt-get install -y "virtualbox-${vb_version}" "linux-headers-$(uname -r)" 
+
+    vboxconfig    
 }
 
 declare vb_version 
 
-[[ $# -eq 0 ]] && vb_version="6.0" || vb_version="${1}"
+[[ $# -eq 0 ]] && vb_version="7.0" || vb_version="${1}"
 
 case "$(check_os_family)" in
     debian)
