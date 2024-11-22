@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+declare -r SCRIPT_NAME="${0%.*}"
+
 check_os_family() {
     os_family="$(curl -qs https://raw.githubusercontent.com/ferminolinux/setup/refs/heads/main/scripts/utils/check_os_family.sh | bash)"
     echo $os_family
@@ -12,19 +14,29 @@ debian() {
     repo="deb [arch=amd64 signed-by=/usr/share/keyrings/oracle-virtualbox-2016.gpg] https://download.virtualbox.org/virtualbox/debian ${version_codename} contrib"
     vb_version="$1"
 
-    echo "${repo}" | tee "/etc/apt/sources.list.d/virtualbox-${version_codename}.list"
+    echo "Configurando o repositório"
 
+    echo "${repo}" | tee "/etc/apt/sources.list.d/virtualbox-${version_codename}.list"
     wget -O- https://www.virtualbox.org/download/oracle_vbox_2016.asc | sudo gpg --yes --output /usr/share/keyrings/oracle-virtualbox-2016.gpg --dearmor
 
-    apt-get update -y
-    apt-get install -y "virtualbox-${vb_version}" "linux-headers-$(uname -r)" 
+    echo "Atualizando os pacotes"
+    apt-get update -y &> "/var/log/${SCRIPT_NAME}/update.log" &
+    wait
 
-    vboxconfig    
+    echo "Instalando pacotes"
+    apt-get install -y "virtualbox-${vb_version}" "linux-headers-$(uname -r)"  &> "/var/log/${SCRIPT_NAME}/install.log" &
+    wait
+
+    echo "Configurando os modulos do kernel"
+    vboxconfig &> " /var/log/${SCRIPT_NAME}/vboxconfig.log" &
+    wait
 }
 
 declare vb_version 
 
 [[ $# -eq 0 ]] && vb_version="7.0" || vb_version="${1}"
+
+mkdir "/var/log/${SCRIPT_NAME}"
 
 case "$(check_os_family)" in
     debian)
