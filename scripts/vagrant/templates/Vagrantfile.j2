@@ -1,0 +1,21 @@
+Vagrant.configure("2") do |config|
+{% if not multi_machine %}
+    config.vm.box = "{{ box }}"
+    config.vm.network "private_network", ip: "{{ ip }}"
+    config.vm.provider "virtualbox"  do |vb|
+        vb.memory = {{ memory | int }}
+        vb.cpus = {{ cpu | int }}
+    end
+{% else %}
+{% for machine in machines %}
+    config.vm.define "{{ machine }}" do |{{ machine }}|
+        {{ machine }}.vm.box = "{{ machine.box }}"
+        {{ machine }}.vm.network "private_network", ip:  "{{ machine.ip }}
+        {{ machine }}.vm.provider "virtualbox" do |vb|
+            vb.memory = {{ machine.memory }}
+            vb.cpus = {{ machine.cpus }}
+        end
+    end
+{% endfor %}
+{% endif %}
+end
